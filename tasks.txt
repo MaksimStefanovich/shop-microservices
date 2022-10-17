@@ -1,0 +1,3 @@
+0. connect to GIT and share the project
+1. product-back service get all products, get by id products
+2. product-back service get all products, get by id products by filters MongoDSL
