@@ -14,9 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Builder
 public class Item {
+
   @Id
   ObjectId id;
   String name;
   BigDecimal price;
 }
-
