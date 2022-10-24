@@ -4,6 +4,7 @@ import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.repository.ItemRepository;
 import com.stefanovich.productback.service.ItemService;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
-@RequestMapping(path = "/item")
+@RequestMapping(path = "/items")
 @RequiredArgsConstructor
 public class ItemController {
 
@@ -31,14 +33,18 @@ public class ItemController {
     itemService.saveItem(itemSaveDto);
   }
 
-  @GetMapping
-  public List<Item> getAllItems() {
-    return itemRepository.findAll();
-  }
 
   @GetMapping("{id}")
   public Item getItem(@PathVariable ObjectId id) throws Exception {
     return itemRepository.findById(id).orElseThrow(()
         -> new Exception("not found item wit id " + id));
+  }
+
+  @GetMapping()
+  public List<Item> getAllItems(
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) BigDecimal price
+  ) {
+    return itemService.getAllItemsByFilters(name, price);
   }
 }
