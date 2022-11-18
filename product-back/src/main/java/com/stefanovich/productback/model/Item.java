@@ -1,5 +1,6 @@
 package com.stefanovich.productback.model;
 
+import com.querydsl.core.annotations.QueryEntity;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@QueryEntity
 @Document(collection = "items")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
@@ -19,4 +21,5 @@ public class Item {
   ObjectId id;
   String name;
   BigDecimal price;
+  String category;
 }

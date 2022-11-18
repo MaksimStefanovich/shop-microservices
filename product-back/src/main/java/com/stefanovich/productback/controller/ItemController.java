@@ -45,6 +45,6 @@ public class ItemController {
       @RequestParam(required = false) String name,
       @RequestParam(required = false) BigDecimal price
   ) {
-    return itemService.getAllItemsByFilters(name, price);
+    return itemService.getAllItemsByFilters(name, price, null);
   }
 }
