@@ -1,4 +1,4 @@
-package com.stefanovich.productback.repository;
+package com.stefanovich.productback.repository.mongo;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.stefanovich.productback.model.Item;

@@ -8,3 +8,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo
       MONGO_INITDB_ROOT_PASSWORD: 12345
+  redis:
+    image: redis:7.0.8
+    ports:
+      - 6388:6379
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
