@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
+import com.stefanovich.productback.model.dto.PageDto;
 import com.stefanovich.productback.repository.mongo.ItemRepository;
 import com.stefanovich.productback.service.cache.ItemCache;
 import java.util.ArrayList;
@@ -30,16 +31,16 @@ public class ItemService {
     itemCache.clear();
   }
 
-  public Page<Item> getAllItemsByFilters(ItemSearchFilterDto itemSearchFilter, int size, int page) {
+  public PageDto<Item> getAllItemsByFilters(ItemSearchFilterDto itemSearchFilter) {
     Optional.ofNullable(itemSearchFilter)
         .orElseThrow(() -> new IllegalArgumentException("filter must be not null"));
 
-//    Optional<Page<Item>> cacheItems = itemCache.get(itemSearchFilter);
-//    if (cacheItems.isPresent()) {
-//      log.debug("use cache result");
-//      return cacheItems.get();
-//    }
-//    log.debug("cache miss");
+    Optional<PageDto<Item>> cacheItems = itemCache.get(itemSearchFilter);
+    if (cacheItems.isPresent()) {
+      log.debug("use cache result");
+      return cacheItems.get();
+    }
+    log.debug("cache miss");
     List<BooleanExpression> filters = new ArrayList<>();
     itemSearchFilter.getNameO().ifPresent(n -> filters.add(ItemRepository.nameLikeIgnoreCase(n)));
     itemSearchFilter.getPriceO().ifPresent(p -> filters.add(ItemRepository.priceEq(p)));
@@ -51,14 +52,14 @@ public class ItemService {
 //      }
 //      categoryFilter.stream().reduce(BooleanExpression::or).ifPresent(filters::add);
 //    });
-    PageRequest pageRequest = PageRequest.of(page, size);
+    PageRequest pageRequest = PageRequest.of(itemSearchFilter.getPage(), itemSearchFilter.getSize());
     Page<Item> result = filters.stream()
         .reduce(BooleanExpression::and)
         .map(booleanExpression -> itemRepository.findAll(booleanExpression, pageRequest))
         .orElse(itemRepository.findAll(pageRequest));
-
-//    itemCache.put(itemSearchFilter, result);
-    return result;
+PageDto<Item> resultDto = new PageDto<>(result);
+    itemCache.put(itemSearchFilter, resultDto);
+    return resultDto;
   }
 }
 

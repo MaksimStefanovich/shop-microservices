@@ -3,16 +3,14 @@ package com.stefanovich.productback.controller;
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
+import com.stefanovich.productback.model.dto.PageDto;
 import com.stefanovich.productback.service.ItemService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,11 +35,9 @@ public class ItemController {
 //  }
 
   @GetMapping
-  public Page<Item> getAllItems(
-      ItemSearchFilterDto itemSearchFilter,
-      @RequestParam(required = false, defaultValue = "10") int size,
-      @RequestParam(required = false, defaultValue = "0") int page
+  public PageDto<Item> getAllItems(
+      ItemSearchFilterDto itemSearchFilter
   ) {
-    return itemService.getAllItemsByFilters(itemSearchFilter, size, page);
+    return itemService.getAllItemsByFilters(itemSearchFilter);
   }
 }

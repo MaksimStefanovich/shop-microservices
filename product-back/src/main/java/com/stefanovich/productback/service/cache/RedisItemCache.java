@@ -2,6 +2,7 @@ package com.stefanovich.productback.service.cache;
 
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
+import com.stefanovich.productback.model.dto.PageDto;
 import com.stefanovich.productback.model.redis.ItemEntityCache;
 import com.stefanovich.productback.model.redis.ItemSearchFilterCache;
 import com.stefanovich.productback.repository.redis.ItemSearchFilterRepository;
@@ -24,23 +25,32 @@ public class RedisItemCache implements ItemCache {
   private final ItemSearchFilterRepository itemSearchFilterRepository;
 
   @Override
-  public Optional<Page<Item>> get(ItemSearchFilterDto cacheKey) {
+  public Optional<PageDto<Item>> get(ItemSearchFilterDto cacheKey) {
     return itemSearchFilterRepository
         .findById(cacheKey.toString())
         .map(ItemSearchFilterCache::getItems)
         .map(
-            l -> new PageImpl<>(l.getContent().stream()
-                .map(ItemEntityCache::toItem)
-                .collect(Collectors.toList()))
-        );
+            l -> PageDto.<Item>builder()
+                .currentPage(l.getCurrentPage())
+                .totalPages(l.getTotalPages())
+                .currentSize(l.getCurrentSize())
+                .totalElements(l.getTotalElements())
+                .content(l.getContent().stream()
+                    .map(ItemEntityCache::toItem)
+                    .collect(Collectors.toList())).build());
   }
 
   @Override
-  public void put(ItemSearchFilterDto cacheKey, Page<Item> cacheValue) {
+  public void put(ItemSearchFilterDto cacheKey, PageDto<Item> cacheValue) {
     itemSearchFilterRepository.save(ItemSearchFilterCache.builder()
         .itemSearchFilterDto(cacheKey.toString())
-        .items(new PageImpl<>(cacheValue.stream().map(ItemEntityCache::new).collect(Collectors.toList())))
-        .build());
+        .items(PageDto.<ItemEntityCache>builder()
+            .currentPage(cacheValue.getCurrentPage())
+            .totalPages(cacheValue.getTotalPages())
+            .currentSize(cacheValue.getCurrentSize())
+            .totalElements(cacheValue.getTotalElements())
+            .content(cacheValue.getContent().stream().map(ItemEntityCache::new)
+                .collect(Collectors.toList())).build()).build());
   }
 
   @Override
