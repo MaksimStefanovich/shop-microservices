@@ -1,6 +1,7 @@
 package com.stefanovich.productback.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.stefanovich.productback.aop.annotation.MyCache;
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ItemService {
     itemCache.clear();
   }
 
+  @MyCache
   public PageDto<Item> getAllItemsByFilters(ItemSearchFilterDto itemSearchFilter) {
     Optional.ofNullable(itemSearchFilter)
         .orElseThrow(() -> new IllegalArgumentException("filter must be not null"));
@@ -52,14 +55,20 @@ public class ItemService {
 //      }
 //      categoryFilter.stream().reduce(BooleanExpression::or).ifPresent(filters::add);
 //    });
-    PageRequest pageRequest = PageRequest.of(itemSearchFilter.getPage(), itemSearchFilter.getSize());
+    PageRequest pageRequest = PageRequest.of(itemSearchFilter.getPage(),
+        itemSearchFilter.getSize());
     Page<Item> result = filters.stream()
         .reduce(BooleanExpression::and)
         .map(booleanExpression -> itemRepository.findAll(booleanExpression, pageRequest))
         .orElse(itemRepository.findAll(pageRequest));
-PageDto<Item> resultDto = new PageDto<>(result);
+    PageDto<Item> resultDto = new PageDto<>(result);
     itemCache.put(itemSearchFilter, resultDto);
-    return resultDto;
+//    return resultDto;
+    throw new RuntimeException("TEST EXCEPTION");
+  }
+
+  public Item getById(ObjectId id) {
+    return itemRepository.findById(id).orElseThrow();
   }
 }
 
