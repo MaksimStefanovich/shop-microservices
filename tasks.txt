@@ -1,6 +1,0 @@
-0. test for com.stefanovich.productback.api.ItemApi#getAllItems
-            com.stefanovich.productback.service.ItemService#getAllItemsByFilters
-            com.stefanovich.productback.service.cache.RedisItemCache#*
-
-            watch video PROXY
-            return to aspect in April
