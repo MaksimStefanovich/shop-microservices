@@ -2,6 +2,7 @@ package com.stefanovich.productback.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.stefanovich.productback.aop.annotation.MyCache;
+import com.stefanovich.productback.kafka.producer.ItemKafkaProducer;
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
@@ -25,6 +26,7 @@ public class ItemService {
 
   private final ItemRepository itemRepository;
   private final ItemCache itemCache;
+  private final ItemKafkaProducer itemKafkaProducer;
 
   public void saveItem(ItemSaveDto itemSaveDto) {
     itemRepository.insert(Item.builder()
@@ -38,12 +40,7 @@ public class ItemService {
     Optional.ofNullable(itemSearchFilter)
         .orElseThrow(() -> new IllegalArgumentException("filter must be not null"));
 
-    Optional<PageDto<Item>> cacheItems = itemCache.get(itemSearchFilter);
-    if (cacheItems.isPresent()) {
-      log.debug("use cache result");
-      return cacheItems.get();
-    }
-    log.debug("cache miss");
+
     List<BooleanExpression> filters = new ArrayList<>();
     itemSearchFilter.getNameO().ifPresent(n -> filters.add(ItemRepository.nameLikeIgnoreCase(n)));
     itemSearchFilter.getPriceO().ifPresent(p -> filters.add(ItemRepository.priceEq(p)));
@@ -62,9 +59,15 @@ public class ItemService {
         .map(booleanExpression -> itemRepository.findAll(booleanExpression, pageRequest))
         .orElse(itemRepository.findAll(pageRequest));
     PageDto<Item> resultDto = new PageDto<>(result);
-    itemCache.put(itemSearchFilter, resultDto);
-//    return resultDto;
-    throw new RuntimeException("TEST EXCEPTION");
+    return resultDto;
+//    throw new RuntimeException("TEST EXCEPTION");
+  }
+
+  public Item replace(Item item){
+    Item newItem = itemRepository.save(item);
+    itemCache.clear();
+    itemKafkaProducer.sendUpdate(newItem);
+    return newItem;
   }
 
   public Item getById(ObjectId id) {

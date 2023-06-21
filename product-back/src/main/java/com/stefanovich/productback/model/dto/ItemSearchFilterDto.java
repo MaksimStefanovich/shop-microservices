@@ -3,7 +3,6 @@ package com.stefanovich.productback.model.dto;
 import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.Data;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Data
 public class ItemSearchFilterDto {

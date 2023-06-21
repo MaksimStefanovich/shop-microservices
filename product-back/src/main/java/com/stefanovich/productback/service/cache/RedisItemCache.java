@@ -5,15 +5,12 @@ import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
 import com.stefanovich.productback.model.dto.PageDto;
 import com.stefanovich.productback.model.redis.ItemEntityCache;
 import com.stefanovich.productback.model.redis.ItemSearchFilterCache;
-import com.stefanovich.productback.repository.redis.ItemSearchFilterRepository;
-import java.util.List;
+import com.stefanovich.productback.repository.redis.ItemSearchFilterCacheRepository;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,11 +19,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RedisItemCache implements ItemCache {
 
-  private final ItemSearchFilterRepository itemSearchFilterRepository;
+  private final ItemSearchFilterCacheRepository itemSearchFilterCacheRepository;
 
   @Override
   public Optional<PageDto<Item>> get(ItemSearchFilterDto cacheKey) {
-    return itemSearchFilterRepository
+    return itemSearchFilterCacheRepository
         .findById(cacheKey.toString())
         .map(ItemSearchFilterCache::getItems)
         .map(
@@ -42,7 +39,7 @@ public class RedisItemCache implements ItemCache {
 
   @Override
   public void put(ItemSearchFilterDto cacheKey, PageDto<Item> cacheValue) {
-    itemSearchFilterRepository.save(ItemSearchFilterCache.builder()
+    itemSearchFilterCacheRepository.save(ItemSearchFilterCache.builder()
         .itemSearchFilterDto(cacheKey.toString())
         .items(PageDto.<ItemEntityCache>builder()
             .currentPage(cacheValue.getCurrentPage())
@@ -55,6 +52,6 @@ public class RedisItemCache implements ItemCache {
 
   @Override
   public void clear() {
-    itemSearchFilterRepository.deleteAll();
+    itemSearchFilterCacheRepository.deleteAll();
   }
 }

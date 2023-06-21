@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.stefanovich.productback.controller.ItemController;
+import com.stefanovich.productback.api.ItemApi;
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
 import com.stefanovich.productback.model.dto.PageDto;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
-@WebMvcTest(ItemController.class)
+@WebMvcTest(ItemApi.class)
 public class ItemControllerTests {
 
   @Autowired
@@ -55,6 +55,8 @@ public class ItemControllerTests {
         .price(BigDecimal.valueOf(500))
         .name("car")
         .build();
+// TODO PageImpl with default page and size
+
     items = new PageDto<>(new PageImpl(List.of(item1, item2, item3)));
 
   }
@@ -185,7 +187,7 @@ public class ItemControllerTests {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.content.size()").value(3))
         .andExpect(jsonPath("$.totalPages").value(1))
-//        .andExpect(jsonPath("$.currentSize").value(10))
+        .andExpect(jsonPath("$.currentSize").value(10))
         .andExpect(jsonPath("$.currentPage").value(0))
         .andDo(print());
   }
