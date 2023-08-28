@@ -22,6 +22,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
       POSTGRES_DB: cart-and-order
+  cassandra:
+    image: cassandra:4.1.2
+    ports:
+      - 9042:9042
+    environment:
+      CASSANDRA_CLUSTER_NAME: cassandracl
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     environment:

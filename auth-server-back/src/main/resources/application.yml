@@ -1,0 +1,14 @@
+spring:
+  cassandra:
+    keyspace-name: shop
+    local-datacenter: datacenter1
+    schema-action: create_if_not_exists
+#    port: 9042
+#    contact-points: 127.0.0.1
+server:
+  port: 8083
+jwt:
+  life-time-minutes: 10
+logging:
+  level:
+    org.springframework.web.*: trace
