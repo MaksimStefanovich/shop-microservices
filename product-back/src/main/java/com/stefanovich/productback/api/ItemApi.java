@@ -6,17 +6,11 @@ import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
 import com.stefanovich.productback.model.dto.PageDto;
 import com.stefanovich.productback.service.ItemService;
+import com.stefanovich.productback.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping(path = "api/v1/items")
@@ -24,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemApi {
 
   private final ItemService itemService;
+  private final JwtService jwtService;
+
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void addItem(@RequestBody ItemSaveDto itemSaveDto) {
-
+  public void addItem(@RequestBody ItemSaveDto itemSaveDto, @RequestHeader("Authorization") String jwt) {
+    jwtService.validate(jwt);
     itemService.saveItem(itemSaveDto);
   }
 

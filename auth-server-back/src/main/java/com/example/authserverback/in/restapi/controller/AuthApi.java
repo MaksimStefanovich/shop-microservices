@@ -8,10 +8,9 @@ import com.example.authserverback.service.JwtService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,8 +29,13 @@ public class AuthApi {
     }
 
     @PostMapping("validate-token")
-    public void validate(@RequestBody ValidateTokenDto validateTokenDto){
+    public void validate(@RequestBody ValidateTokenDto validateTokenDto) {
         jwtService.validate(validateTokenDto.getJwt());
+    }
+
+    @GetMapping("jwk")
+    public Map<String, Object> getJwk() {
+        return jwtService.getJwk();
     }
 
 }
