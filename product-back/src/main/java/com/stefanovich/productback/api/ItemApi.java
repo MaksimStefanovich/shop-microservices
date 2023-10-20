@@ -17,44 +17,42 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ItemApi {
 
-  private final ItemService itemService;
-  private final JwtService jwtService;
+    private final ItemService itemService;
 
 
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public void addItem(@RequestBody ItemSaveDto itemSaveDto, @RequestHeader("Authorization") String jwt) {
-    jwtService.validate(jwt);
-    itemService.saveItem(itemSaveDto);
-  }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addItem(@RequestBody ItemSaveDto itemSaveDto) {
+        itemService.saveItem(itemSaveDto);
+    }
 
-  @GetMapping("{id}")
-  public Item getItem(@PathVariable ObjectId id) {
-    return itemService.getById(id);
-  }
+    @GetMapping("{id}")
+    public Item getItem(@PathVariable ObjectId id) {
+        return itemService.getById(id);
+    }
 
-  @GetMapping
-  public PageDto<Item> getAllItems(
-      ItemSearchFilterDto itemSearchFilter
-  ) {
-    return itemService.getAllItemsByFilters(itemSearchFilter);
-  }
+    @GetMapping
+    public PageDto<Item> getAllItems(
+            ItemSearchFilterDto itemSearchFilter
+    ) {
+        return itemService.getAllItemsByFilters(itemSearchFilter);
+    }
 
-  @PutMapping
-  public ItemReplaceDto replace(@RequestBody ItemReplaceDto itemReplaceDto) {
-    Item item = Item.builder()
-        .id(itemReplaceDto.getId())
-        .name(itemReplaceDto.getName())
-        .price(itemReplaceDto.getPrice())
-        .category(itemReplaceDto.getCategory()).build();
-    itemService.replace(item);
+    @PutMapping
+    public ItemReplaceDto replace(@RequestBody ItemReplaceDto itemReplaceDto) {
+        Item item = Item.builder()
+                .id(itemReplaceDto.getId())
+                .name(itemReplaceDto.getName())
+                .price(itemReplaceDto.getPrice())
+                .category(itemReplaceDto.getCategory()).build();
+        itemService.replace(item);
 
-    return ItemReplaceDto.builder()
-        .id(item.getId())
-        .name(item.getName())
-        .price(item.getPrice())
-        .category(item.getCategory())
-        .build();
-  }
+        return ItemReplaceDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .price(item.getPrice())
+                .category(item.getCategory())
+                .build();
+    }
 
 }

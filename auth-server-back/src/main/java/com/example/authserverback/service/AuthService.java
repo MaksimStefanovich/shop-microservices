@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -23,7 +25,6 @@ public class AuthService {
       throw new RuntimeException();
     }
 
-    return jwtService.create(user.getLogin());
-
+    return jwtService.create(user.getLogin(), user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
   }
 }

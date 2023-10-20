@@ -19,6 +19,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -51,10 +52,11 @@ public class JwtService {
         }
     }
 
-    public String create(String subject) throws JWTCreationException {
+    public String create(String subject, Set<String> roles) throws JWTCreationException {
         return JWT.create()
                 .withIssuer(ISSUER_NAME)
                 .withSubject(subject)
+                .withArrayClaim("roles", roles.toArray(new String[0]))
                 .withExpiresAt(ZonedDateTime.now().plusMinutes(jwtLifeTimeMinutes).toInstant())
                 .sign(RSA);
     }
