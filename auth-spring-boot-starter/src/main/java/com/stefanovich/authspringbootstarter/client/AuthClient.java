@@ -1,7 +1,7 @@
-package com.stefanovich.productback.client;
+package com.stefanovich.authspringbootstarter.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stefanovich.productback.model.dto.JwkDto;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +18,21 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AuthClient {
     private final ObjectMapper objectMapper;
+
+    @PostConstruct
+    public void init() {
+        log.debug("init starter");
+    }
+
     @SneakyThrows
     public JwkDto getJwk() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            //TODO move url to property
             HttpGet httpGet = new HttpGet("http://localhost:8083/auth/jwk");
             try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
                 HttpEntity entity = response.getEntity();
                 String responseBody = EntityUtils.toString(entity);
-                log.info(responseBody);
+                log.debug(responseBody);
                 return objectMapper.readValue(responseBody, JwkDto.class);
             }
         }

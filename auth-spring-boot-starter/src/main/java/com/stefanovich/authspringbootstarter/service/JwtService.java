@@ -1,12 +1,12 @@
-package com.stefanovich.productback.service;
+package com.stefanovich.authspringbootstarter.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.stefanovich.productback.client.AuthClient;
-import com.stefanovich.productback.model.dto.JwkDto;
+import com.stefanovich.authspringbootstarter.client.AuthClient;
+import com.stefanovich.authspringbootstarter.client.JwkDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class JwtService {
     private Algorithm rsa;
 
     @SneakyThrows
-    public void validate(String jwt) {
+    public DecodedJWT validate(String jwt) {
         log.info(jwt);
         DecodedJWT verifiedJwt;
 
@@ -42,20 +41,16 @@ public class JwtService {
         } catch (SignatureVerificationException e) {
             verifiedJwt = getDecodedJWT(jwt);
         }
-
-        List<String> roles = verifiedJwt.getClaim("roles").asList(String.class);
-        if (!roles.contains("ADMIN")) {
-            throw new RuntimeException("wrong role");
-        }
+        return verifiedJwt;
     }
 
     private DecodedJWT getDecodedJWT(String jwt) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        getJwk();
+        requestJwk();
         JWTVerifier verifier = JWT.require(rsa).acceptExpiresAt(2).build();
         return verifier.verify(jwt);
     }
 
-    private void getJwk() throws InvalidKeySpecException, NoSuchAlgorithmException {
+    private void requestJwk() throws InvalidKeySpecException, NoSuchAlgorithmException {
         if (jwk == null || jwk.getIat().plus(30, ChronoUnit.DAYS).isBefore(Instant.now())) {
             jwk = authClient.getJwk();
             byte[] exponent = Base64.getUrlDecoder().decode(jwk.getE());

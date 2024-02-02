@@ -1,16 +1,20 @@
 package com.stefanovich.productback.api;
 
+
+
+import com.stefanovich.authspringbootstarter.authorize.PreAuthorize;
+import com.stefanovich.authspringbootstarter.authorize.Role;
 import com.stefanovich.productback.model.Item;
 import com.stefanovich.productback.model.dto.ItemReplaceDto;
 import com.stefanovich.productback.model.dto.ItemSaveDto;
 import com.stefanovich.productback.model.dto.ItemSearchFilterDto;
 import com.stefanovich.productback.model.dto.PageDto;
 import com.stefanovich.productback.service.ItemService;
-import com.stefanovich.productback.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController()
 @RequestMapping(path = "api/v1/items")
@@ -19,9 +23,9 @@ public class ItemApi {
 
     private final ItemService itemService;
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize({Role.USER, Role.ADMIN})
     public void addItem(@RequestBody ItemSaveDto itemSaveDto) {
         itemService.saveItem(itemSaveDto);
     }

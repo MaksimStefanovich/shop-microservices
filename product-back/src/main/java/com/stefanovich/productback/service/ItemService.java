@@ -1,6 +1,7 @@
 package com.stefanovich.productback.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.stefanovich.authspringbootstarter.filter.SecurityContextHolder;
 import com.stefanovich.productback.aop.annotation.MyCache;
 import com.stefanovich.productback.kafka.producer.ItemKafkaProducer;
 import com.stefanovich.productback.model.Item;
@@ -33,6 +34,7 @@ public class ItemService {
         .name(itemSaveDto.getName())
         .price(itemSaveDto.getPrice()).build());
     itemCache.clear();
+    log.info("{}", SecurityContextHolder.getUserInfo());
   }
 
   @MyCache

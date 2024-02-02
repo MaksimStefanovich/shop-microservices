@@ -1,4 +1,4 @@
-package com.stefanovich.productback.model.dto;
+package com.stefanovich.authspringbootstarter.client;
 
 import lombok.AccessLevel;
 import lombok.Data;

@@ -6,8 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.3</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <version>3.1.5</version>    <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.stefanovich</groupId>
   <artifactId>product-back</artifactId>
@@ -15,9 +14,14 @@
   <name>product-back</name>
   <description>product-back</description>
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
   </properties>
   <dependencies>
+      <dependency>
+      <groupId>com.stefanovich</groupId>
+      <artifactId>auth-spring-boot-starter</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -96,17 +100,7 @@
       <version>1.6.2</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
-    <dependency>
-      <groupId>org.apache.httpcomponents.client5</groupId>
-      <artifactId>httpclient5</artifactId>
-      <version>5.2.1</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
-    <dependency>
-      <groupId>com.auth0</groupId>
-      <artifactId>java-jwt</artifactId>
-      <version>4.4.0</version>
-    </dependency>
+
 
 
   </dependencies>

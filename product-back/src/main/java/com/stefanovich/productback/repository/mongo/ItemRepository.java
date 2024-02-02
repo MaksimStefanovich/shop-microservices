@@ -2,9 +2,10 @@ package com.stefanovich.productback.repository.mongo;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.stefanovich.productback.model.Item;
-import com.stefanovich.productback.model.QItem;
 import java.math.BigDecimal;
 import java.util.List;
+
+import com.stefanovich.productback.model.QItem;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
